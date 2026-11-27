@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>웹 도구 게시판 | HELLOJJO</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 40px 16px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .board {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .board-head {
+      display: grid;
+      grid-template-columns: 64px 1fr 110px 90px;
+      gap: 12px;
+      padding: 12px 18px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .board-head .center {
+      text-align: center;
+    }
+
+    .post-list {
+      list-style: none;
+    }
+
+    .post-row {
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.15s ease;
+    }
+
+    .post-row:last-child {
+      border-bottom: none;
+    }
+
+    .post-row:hover {
+      background-color: #f8fafc;
+    }
+
+    .post-link {
+      display: grid;
+      grid-template-columns: 64px 1fr 110px 90px;
+      gap: 12px;
+      align-items: center;
+      padding: 16px 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .col-no {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-radius: 6px;
+      padding: 4px 0;
+      width: 36px;
+      margin: 0 auto;
+    }
+
+    .col-title {
+      min-width: 0;
+    }
+
+    .post-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .post-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .col-tag {
+      text-align: center;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .col-path {
+      text-align: right;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    @media (max-width: 600px) {
+      .board-head {
+        display: none;
+      }
+
+      .post-link {
+        grid-template-columns: 44px 1fr;
+        grid-template-areas:
+          "no title"
+          "no meta";
+        gap: 6px 12px;
+        align-items: start;
+      }
+
+      .col-no {
+        grid-area: no;
+        margin-top: 2px;
+      }
+
+      .col-title {
+        grid-area: title;
+      }
+
+      .post-row .mobile-meta {
+        grid-area: meta;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>웹 도구 게시판</h1>
+      <p>배포한 웹 페이지와 도구를 한눈에 모아둔 목록입니다.</p>
+    </header>
+
+    <main class="board
