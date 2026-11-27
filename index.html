@@ -12,12 +12,8 @@
       --bg-card: #ffffff;
       --text-main: #1e1b4b;
       --text-sub: #64748b;
-      --border-soft: #e2e8f0;
       --primary: #6366f1;
       --primary-dark: #4f46e5;
-      --coral: #f43f5e;
-      --mint: #10b981;
-      --amber: #f59e0b;
       --row-hover: #fdf4ff;
     }
 
@@ -44,7 +40,6 @@
       margin: 0 auto;
     }
 
-    /* 상단 프로필 & 저장소 헤더 */
     .hero-card {
       position: relative;
       display: flex;
@@ -126,7 +121,6 @@
       color: var(--text-sub);
     }
 
-    /* 게시판 카드 */
     .board-card {
       background: var(--bg-card);
       border: 1.5px solid #e2e8f0;
@@ -190,6 +184,7 @@
     .num-1 { background: #e0e7ff; color: #4338ca; }
     .num-2 { background: #ffe4e6; color: #be123c; }
     .num-3 { background: #d1fae5; color: #047857; }
+    .num-4 { background: #fef3c7; color: #b45309; }
 
     .row-link {
       text-decoration: none;
@@ -243,6 +238,12 @@
       background: linear-gradient(135deg, #10b981, #06b6d4);
       color: #ffffff;
       box-shadow: 0 4px 10px -3px rgba(16, 185, 129, 0.45);
+    }
+
+    .badge-split {
+      background: linear-gradient(135deg, #f59e0b, #ec4899);
+      color: #ffffff;
+      box-shadow: 0 4px 10px -3px rgba(245, 158, 11, 0.45);
     }
 
     .path-cell {
@@ -332,7 +333,7 @@
   <main class="container">
     <header class="hero-card">
       <div class="avatar-wrap">
-        <img src="./123.png" alt="HELLOJJO" />
+        <img src="./123.png" alt="HELLOJJO 프로필 이미지" />
       </div>
       <div class="hero-info">
         <div class="repo-pill">REPO · HELLOJJO</div>
@@ -395,6 +396,21 @@
             </td>
             <td class="path-cell">
               <a class="path-link" href="./README.md">./README.md →</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="num"><span class="num-badge num-4">4</span></td>
+            <td class="title-cell">
+              <a class="row-link" href="./split/">
+                <div class="item-title">split 웹 도구</div>
+                <div class="item-desc">split 폴더에 구성된 페이지 열기</div>
+              </a>
+            </td>
+            <td class="category-cell">
+              <span class="badge badge-split">웹앱</span>
+            </td>
+            <td class="path-cell">
+              <a class="path-link" href="./split/">./split/ →</a>
             </td>
           </tr>
         </tbody>
