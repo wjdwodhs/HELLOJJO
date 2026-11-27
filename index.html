@@ -6,20 +6,19 @@
   <title>웹 도구 게시판 | HELLOJJO</title>
   <style>
     :root {
-      --bg-page: #f5f7fb;
+      --bg-grad-1: #fff1f2;
+      --bg-grad-2: #eef2ff;
+      --bg-grad-3: #ecfeff;
       --bg-card: #ffffff;
-      --bg-hover: #f8faff;
-      --text-main: #111827;
-      --text-sub: #6b7280;
-      --border-light: #e5e7eb;
-      --accent: #2563eb;
-      --accent-soft: #eff6ff;
-      --badge-web-bg: #dbeafe;
-      --badge-web-text: #1d4ed8;
-      --badge-img-bg: #dcfce7;
-      --badge-img-text: #15803d;
-      --badge-doc-bg: #f3e8ff;
-      --badge-doc-text: #7e22ce;
+      --text-main: #1e1b4b;
+      --text-sub: #64748b;
+      --border-soft: #e2e8f0;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --coral: #f43f5e;
+      --mint: #10b981;
+      --amber: #f59e0b;
+      --row-hover: #fdf4ff;
     }
 
     * {
@@ -30,39 +29,109 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: radial-gradient(circle at top right, #eef4ff 0%, var(--bg-page) 55%);
-      color: var(--text-main);
-      line-height: 1.5;
-      padding: 48px 20px;
       min-height: 100vh;
+      padding: 44px 20px;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 12% 10%, var(--bg-grad-1) 0%, transparent 45%),
+        radial-gradient(circle at 88% 15%, var(--bg-grad-2) 0%, transparent 48%),
+        radial-gradient(circle at 50% 95%, var(--bg-grad-3) 0%, transparent 50%),
+        #f8fafc;
     }
 
     .container {
-      max-width: 880px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
-    .header {
+    /* 상단 프로필 & 저장소 헤더 */
+    .hero-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      background: linear-gradient(120deg, #ffffff 0%, #f5f3ff 55%, #fff1f2 100%);
+      border: 1.5px solid #e0e7ff;
+      border-radius: 24px;
+      padding: 24px 28px;
       margin-bottom: 24px;
+      box-shadow: 0 14px 34px -14px rgba(99, 102, 241, 0.22);
+      overflow: hidden;
     }
 
-    .header h1 {
-      font-size: 1.75rem;
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -30px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(244, 63, 94, 0.12));
+      pointer-events: none;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+      width: 86px;
+      height: 86px;
+      border-radius: 24px;
+      padding: 3px;
+      background: linear-gradient(135deg, #f43f5e, #8b5cf6, #06b6d4);
+      box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.45);
+    }
+
+    .avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 21px;
+      background: #ffffff;
+      display: block;
+    }
+
+    .hero-info {
+      position: relative;
+      z-index: 1;
+    }
+
+    .repo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(90deg, #6366f1, #ec4899);
+      color: #ffffff;
+      font-size: 0.78rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 12px -4px rgba(236, 72, 153, 0.45);
     }
 
-    .header p {
-      font-size: 0.95rem;
+    .hero-info h1 {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(90deg, #1e1b4b 0%, #4f46e5 65%, #e11d48 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .hero-info p {
+      font-size: 0.93rem;
       color: var(--text-sub);
     }
 
+    /* 게시판 카드 */
     .board-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px -12px rgba(15, 23, 42, 0.08);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 22px;
+      box-shadow: 0 16px 36px -16px rgba(30, 27, 75, 0.12);
       overflow: hidden;
     }
 
@@ -72,14 +141,12 @@
     }
 
     thead th {
-      background: #fafbfd;
-      color: var(--text-sub);
+      background: linear-gradient(90deg, #eef2ff 0%, #fdf2f8 50%, #ecfdf5 100%);
+      color: #4338ca;
       font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
+      font-weight: 700;
       padding: 14px 18px;
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1.5px solid #e0e7ff;
       text-align: left;
     }
 
@@ -88,7 +155,7 @@
     }
 
     tbody tr {
-      transition: background-color 0.18s ease, transform 0.18s ease;
+      transition: background-color 0.2s ease;
     }
 
     tbody tr:not(:last-child) td {
@@ -96,7 +163,7 @@
     }
 
     tbody tr:hover {
-      background-color: var(--bg-hover);
+      background-color: var(--row-hover);
     }
 
     tbody td {
@@ -107,10 +174,22 @@
     .num {
       width: 68px;
       text-align: center;
-      font-weight: 600;
-      color: var(--text-sub);
-      font-size: 0.9rem;
     }
+
+    .num-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .num-1 { background: #e0e7ff; color: #4338ca; }
+    .num-2 { background: #ffe4e6; color: #be123c; }
+    .num-3 { background: #d1fae5; color: #047857; }
 
     .row-link {
       text-decoration: none;
@@ -119,15 +198,15 @@
     }
 
     .item-title {
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 1.02rem;
+      font-weight: 700;
       color: var(--text-main);
       margin-bottom: 4px;
       transition: color 0.18s ease;
     }
 
     tbody tr:hover .item-title {
-      color: var(--accent);
+      color: var(--primary-dark);
     }
 
     .item-desc {
@@ -136,35 +215,38 @@
     }
 
     .category-cell {
-      width: 110px;
+      width: 112px;
       text-align: center;
     }
 
     .badge {
       display: inline-block;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 999px;
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .badge-web {
-      background: var(--badge-web-bg);
-      color: var(--badge-web-text);
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 4px 10px -3px rgba(79, 70, 229, 0.45);
     }
 
     .badge-img {
-      background: var(--badge-img-bg);
-      color: var(--badge-img-text);
+      background: linear-gradient(135deg, #fb7185, #f97316);
+      color: #ffffff;
+      box-shadow: 0 4px 10px -3px rgba(244, 63, 94, 0.45);
     }
 
     .badge-doc {
-      background: var(--badge-doc-bg);
-      color: var(--badge-doc-text);
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      color: #ffffff;
+      box-shadow: 0 4px 10px -3px rgba(16, 185, 129, 0.45);
     }
 
     .path-cell {
-      width: 170px;
+      width: 175px;
       text-align: right;
     }
 
@@ -174,24 +256,33 @@
       gap: 4px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.82rem;
-      color: var(--text-sub);
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 5px 10px;
-      border-radius: 8px;
+      font-weight: 600;
+      color: #4f46e5;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      padding: 6px 11px;
+      border-radius: 10px;
       text-decoration: none;
       transition: all 0.18s ease;
     }
 
     .path-link:hover {
-      color: var(--accent);
-      border-color: #bfdbfe;
-      background: var(--accent-soft);
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      transform: translateY(-1px);
     }
 
     @media (max-width: 640px) {
       body {
-        padding: 28px 14px;
+        padding: 24px 14px;
+      }
+
+      .hero-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 22px 18px;
+        gap: 14px;
       }
 
       thead {
@@ -201,7 +292,7 @@
       tbody tr {
         display: grid;
         grid-template-columns: auto 1fr auto;
-        gap: 8px 12px;
+        gap: 10px 12px;
         padding: 16px;
         border-bottom: 1px solid #f1f5f9;
       }
@@ -217,8 +308,6 @@
 
       .num {
         width: auto;
-        text-align: left;
-        padding-top: 2px;
       }
 
       .title-cell {
@@ -241,9 +330,15 @@
 </head>
 <body>
   <main class="container">
-    <header class="header">
-      <h1>웹 도구 게시판</h1>
-      <p>저장소에 등록된 페이지, 이미지, 문서를 목록으로 모아둔 게시판입니다.</p>
+    <header class="hero-card">
+      <div class="avatar-wrap">
+        <img src="./avatar.png" alt="HELLOJJO 귀여운 남자 캐릭터" />
+      </div>
+      <div class="hero-info">
+        <div class="repo-pill">REPO · HELLOJJO</div>
+        <h1>웹 도구 게시판</h1>
+        <p>HELLOJJO 저장소에 등록된 페이지, 이미지, 문서를 한눈에 모아둔 나만의 공간입니다.</p>
+      </div>
     </header>
 
     <section class="board-card">
@@ -258,8 +353,8 @@
         </thead>
         <tbody>
           <tr>
-            <td class="num">1</td>
-            <td>
+            <td class="num"><span class="num-badge num-1">1</span></td>
+            <td class="title-cell">
               <a class="row-link" href="./qr/">
                 <div class="item-title">QR 코드 생성기 &amp; 리더기</div>
                 <div class="item-desc">링크 입력 시 QR 자동 생성 및 이미지 업로드로 링크 추출</div>
@@ -273,8 +368,8 @@
             </td>
           </tr>
           <tr>
-            <td class="num">2</td>
-            <td>
+            <td class="num"><span class="num-badge num-2">2</span></td>
+            <td class="title-cell">
               <a class="row-link" href="./123.png">
                 <div class="item-title">123.png 이미지 파일</div>
                 <div class="item-desc">저장소에 업로드된 PNG 이미지 확인</div>
@@ -288,8 +383,8 @@
             </td>
           </tr>
           <tr>
-            <td class="num">3</td>
-            <td>
+            <td class="num"><span class="num-badge num-3">3</span></td>
+            <td class="title-cell">
               <a class="row-link" href="./README.md">
                 <div class="item-title">README.md 안내 문서</div>
                 <div class="item-desc">저장소 기본 설명 문서 보기</div>
