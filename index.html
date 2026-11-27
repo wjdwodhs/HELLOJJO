@@ -30,7 +30,7 @@
     }
 
     .container {
-      max-width: 760px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -59,7 +59,7 @@
 
     .board-head {
       display: grid;
-      grid-template-columns: 64px 1fr 110px 90px;
+      grid-template-columns: 64px 1fr 110px 110px;
       gap: 12px;
       padding: 12px 18px;
       background: #f1f5f9;
@@ -92,7 +92,7 @@
 
     .post-link {
       display: grid;
-      grid-template-columns: 64px 1fr 110px 90px;
+      grid-template-columns: 64px 1fr 110px 110px;
       gap: 12px;
       align-items: center;
       padding: 16px 18px;
@@ -148,6 +148,7 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--accent);
+      word-break: break-all;
     }
 
     @media (max-width: 600px) {
@@ -157,27 +158,21 @@
 
       .post-link {
         grid-template-columns: 44px 1fr;
-        grid-template-areas:
-          "no title"
-          "no meta";
         gap: 6px 12px;
         align-items: start;
       }
 
       .col-no {
-        grid-area: no;
         margin-top: 2px;
       }
 
-      .col-title {
-        grid-area: title;
+      .col-tag,
+      .col-path {
+        grid-column: 2;
+        text-align: left;
       }
 
-      .post-row .mobile-meta {
-        grid-area: meta;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      .col-tag {
         margin-top: 4px;
       }
     }
@@ -187,7 +182,56 @@
   <div class="container">
     <header class="header">
       <h1>웹 도구 게시판</h1>
-      <p>배포한 웹 페이지와 도구를 한눈에 모아둔 목록입니다.</p>
+      <p>저장소에 등록된 페이지, 이미지, 문서를 목록으로 모아둔 게시판입니다.</p>
     </header>
 
-    <main class="board
+    <main class="board">
+      <div class="board-head">
+        <span class="center">번호</span>
+        <span>제목</span>
+        <span class="center">구분</span>
+        <span style="text-align: right;">경로</span>
+      </div>
+
+      <ul class="post-list" id="post-list">
+        <!-- 새 항목을 추가하려면 아래 li 블록을 복사해 순서를 맞추세요 -->
+        <li class="post-row">
+          <a class="post-link" href="./qr/">
+            <span class="col-no">1</span>
+            <div class="col-title">
+              <div class="post-title">QR 코드 생성기 &amp; 리더기</div>
+              <div class="post-desc">링크 입력 시 QR 자동 생성 및 이미지 업로드로 링크 추출</div>
+            </div>
+            <span class="col-tag"><span class="tag">웹앱</span></span>
+            <span class="col-path">./qr/ →</span>
+          </a>
+        </li>
+
+        <li class="post-row">
+          <a class="post-link" href="./123.png">
+            <span class="col-no">2</span>
+            <div class="col-title">
+              <div class="post-title">123.png 이미지 파일</div>
+              <div class="post-desc">저장소에 업로드된 PNG 이미지 확인</div>
+            </div>
+            <span class="col-tag"><span class="tag">이미지</span></span>
+            <span class="col-path">./123.png →</span>
+          </a>
+        </li>
+
+        <li class="post-row">
+          <a class="post-link" href="./README.md">
+            <span class="col-no">3</span>
+            <div class="col-title">
+              <div class="post-title">README.md 안내 문서</div>
+              <div class="post-desc">저장소 기본 설명 문서 보기</div>
+            </div>
+            <span class="col-tag"><span class="tag">문서</span></span>
+            <span class="col-path">./README.md →</span>
+          </a>
+        </li>
+      </ul>
+    </main>
+  </div>
+</body>
+</html>
