@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>간단 견적·정산 계산기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --band: #0b1f4b;
+      --panel: #ffffff;
+      --ink: #0b1630;
+      --soft: #55607a;
+      --line: #d5dbe8;
+      --acc: #e0115f;
+      --acc2: #fde7ef;
+      --ok: #0b7a4b;
+    }
+    * { box-sizing: border-box; min-width: 0; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+    }
+    .gut {
+      padding-left: max(5vw, 16px);
+      padding-right: max(5vw, 16px);
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    header {
+      background: var(--band);
+      color: #fff;
+      padding: 24px 0;
+    }
+    header h1 {
+      margin: 0 0 4px;
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      margin: 0;
+      color: #c4cde6;
+      font-size: 15px;
+    }
+    main {
+      padding: 26px 0 56px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+      gap: 22px;
+      align-items: start;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 28px -20px rgba(11, 31, 75, 0.35);
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .title-input {
+      width: 100%;
+      font: 700 17px "Noto Sans KR", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 14px;
+      margin-bottom: 14px;
+    }
+    .item-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .item-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(90px, 1fr) 74px auto;
+      gap: 8px;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+    }
+    .item-row input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 9px 10px;
+      font: 500 14px "Noto Sans KR", sans-serif;
+      color: var(--ink);
+    }
+    .item-row input.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .item-row input.qty {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .icon-del {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--soft);
+      font: 700 14px "Noto Sans KR", sans-serif;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+    }
+    .icon-del:hover {
+      color: var(--acc);
+      border-color: var(--acc);
+    }
+    .options-box {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .opt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--soft);
+      margin-bottom: 4px;
+    }
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font: 600 14px "Noto Sans KR", sans-serif;
+      color: var(--ink);
+    }
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .check-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--acc);
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      font: 700 14px "Noto Sans KR", sans-serif;
+      border-radius: 12px;
+      padding: 11px 16px;
+      min-height: 44px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      border-color: var(--acc);
+    }
+    .btn.primary {
+      background: var(--acc);
+      border-color: var(--acc);
+      color: #fff;
+      flex: 1;
+    }
+    .btn.primary:hover {
+      filter: brightness(1.07);
+    }
+    .summary-card {
+      background: var(--acc2);
+      border: 2px solid var(--acc);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .summary-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--acc);
+      margin-bottom: 4px;
+    }
+    .per-person {
+      font-size: clamp(28px, 4.5vw, 40px);
+      font-weight: 900;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .breakdown {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .bk-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .bk-row.total {
+      padding-top: 8px;
+      margin-top: 4px;
+      border-top: 1px solid var(--line);
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--band);
+    }
+    .msg-box {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      font: 500 13px/1.6 "Noto Sans KR", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    .toast {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ok);
+      min-height: 20px;
+    }
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .item-row {
+        grid-template-columns: 1fr 1fr;
+      }
+      .item-row .item-name {
+        grid-column: 1 / -1;
+      }
+      .opt-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap gut">
+      <h1>간단 견적·정산 계산기</h1>
+      <p>항목별 금액과 인원 수를 입력하면 합계, 부가세, 1인당 정산 금액과 안내 문구를 바로 계산합니다.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap gut">
+      <div class="grid">
+        <!-- 왼쪽: 항목 및 정산 옵션 입력 -->
+        <section class="panel" aria-label="항목 입력">
+          <div class="section-head">
+            <h2 class="section-title">견적·정산 항목</h2>
+            <button type="button" class="btn" id="sampleBtn" style="min-height:36px; padding:6px 12px; font-size:13px;">예시 채우기</button>
+          </div>
+
+          <input type="text" class="title-input" id="eventTitle" value="워크숍 뒤풀이 &amp; 다과 정산" aria-label="모임 또는 행사 제목">
+
+          <div class="item-list" id="itemList"></div>
+
+          <div class="btn-row">
+            <button type="button" class="btn" id="addItemBtn">+ 항목 추가</button>
+            <button type="button" class="btn" id="clearAllBtn">초기화</button>
+          </div>
+
+          <div class="options-box">
+            <div class="opt-grid">
+              <div class="field">
+                <label for="peopleCount">정산 인원 (명)</label>
+                <input type="number" id="peopleCount" min="1" max="500" value="4">
+              </div>
+              <div class="field">
+                <label for="roundMode">1인당 금액 반올림/올림</label>
+                <select id="roundMode">
+                  <option value="none" selected>원 단위 그대로</option>
+                  <option value="ceil10">10원 단위 올림</option>
+                  <option value="ceil100">100원 단위 올림</option>
+                  <option value="round100">100원 단위 반올림</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="check-label">
+              <input type="checkbox" id="vatCheck">
+              <span>부가세(VAT 10%) 별도 추가</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- 오른쪽: 합계·1인당 금액·안내 문구 복사 -->
+        <section class="panel" aria-label="계산 결과">
+          <h2 class="section-title" style="margin-bottom:14px;">정산 요약</h2>
+
+          <div class="summary-card">
+            <div class="summary-label" id="perLabel">1인당 정산 금액 (4명 기준)</div>
+            <div class="per-person" id="perPersonAmount">0원</div>
+          </div>
+
+          <div class="breakdown">
+            <div class="bk-row">
+              <span>항목 소계</span>
+              <strong id="subtotalText">0원</strong>
+            </div>
+            <div class="bk-row" id="vatRow" hidden>
+              <span>부가세 (10%)</span>
+              <strong id="vatText">0원</strong>
+            </div>
+            <div class="bk-row total">
+              <span>최종 합계</span>
+              <span id="grandTotalText">0원</span>
+            </div>
+          </div>
+
+          <div class="section-head" style="margin-bottom:8px;">
+            <label for="shareText" class="section-title" style="font-size:15px;">공유용 정산 안내 문구</label>
+            <button type="button" class="btn primary" id="copyMsgBtn" style="flex:0 0 auto; min-height:38px; padding:8px 16px;">문구 복사</button>
+          </div>
+          <textarea class="msg-box" id="shareText" readonly></textarea>
+
+          <div class="toast" id="toastMsg" role="status" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+
+      const defaultItems = [
+        { name: '식사 및 음료', price: 120000, qty: 1 },
+        { name: '커피·간식 박스', price: 18000, qty: 2 }
+      ];
+
+      function formatWon(n) {
+        return `${Math.round(n).toLocaleString('ko-KR')}원`;
+      }
+
+      function applyRounding(amount, mode) {
+        if (mode === 'ceil10') return Math.ceil(amount / 10) * 10;
+        if (mode === 'ceil100') return Math.ceil(amount / 100) * 100;
+        if (mode === 'round100') return Math.round(amount / 100) * 100;
+        return Math.round(amount);
+      }
+
+      function showToast(msg) {
+        $('toastMsg').textContent = msg;
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => { $('toastMsg').textContent = ''; }, 2400);
+      }
+
+      function addItemRow(item = { name: '', price: 0, qty: 1 }) {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <input type="text" class="item-name" placeholder="항목명 (예: 대관료)" value="${escapeAttr(item.name)}">
+          <input type="number" class="num item-price" min="0" step="100" placeholder="단가(원)" value="${Number(item.price) || 0}">
+          <input type="number" class="qty item-qty" min="1" max="999" title="수량" value="${Number(item.qty) || 1}">
+          <button type="button" class="icon-del" title="항목 삭제" aria-label="항목 삭제">✕</button>
+        `;
+
+        row.querySelectorAll('input').forEach(inp => {
+          inp.addEventListener('input', recalculate);
+        });
+
+        row.querySelector('.icon-del').addEventListener('click', () => {
+          row.remove();
+          if (!$('itemList').children.length) addItemRow();
+          recalculate();
+        });
+
+        $('itemList').appendChild(row);
+      }
+
+      function escapeAttr(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      function recalculate() {
+        const rows = Array.from($('itemList').querySelectorAll('.item-row'));
+        const detailLines = [];
+        let subtotal = 0;
+
+        rows.forEach(row => {
+          const name = row.querySelector('.item-name').value.trim() || '항목';
+          const price = Math.max(0, Number(row.querySelector('.item-price').value) || 0);
+          const qty = Math.max(1, parseInt(row.querySelector('.item-qty').value, 10) || 1);
+          const lineTotal = price * qty;
+          subtotal += lineTotal;
+          if (price > 0 || row.querySelector('.item-name').value.trim()) {
+            detailLines.push(`- ${name}: ${formatWon(price)} × ${qty} = ${formatWon(lineTotal)}`);
+          }
+        });
+
+        const addVat = $('vatCheck').checked;
+        const vatAmount = addVat ? Math.round(subtotal * 0.1) : 0;
+        const grandTotal = subtotal + vatAmount;
+        const people = Math.max(1, parseInt($('peopleCount').value, 10) || 1);
+        const roundMode = $('roundMode').value;
+        const perPerson = applyRounding(grandTotal / people, roundMode);
+
+        $('subtotalText').textContent = formatWon(subtotal);
+        $('vatRow').hidden = !addVat;
+        $('vatText').textContent = formatWon(vatAmount);
+        $('grandTotalText').textContent = formatWon(grandTotal);
+        $('perLabel').textContent = `1인당 정산 금액 (${people}명 기준)`;
+        $('perPersonAmount').textContent = formatWon(perPerson);
+
+        const title = $('eventTitle').value.trim() || '정산 내역';
+        const lines = [
+          `[${title}]`,
+          ...(detailLines.length ? detailLines : ['- 항목 없음']),
+          ...(addVat ? [`부가세(10%): ${formatWon(vatAmount)}`] : []),
+          `총 합계: ${formatWon(grandTotal)}`,
+          `정산 인원: ${people}명 → 1인당 ${formatWon(perPerson)}`
+        ];
+        $('shareText').value = lines.join('\n');
+      }
+
+      function loadItems(list) {
+        $('itemList').innerHTML = '';
+        list.forEach(item => addItemRow(item));
+        recalculate();
+      }
+
+      $('addItemBtn').addEventListener('click', () => {
+        addItemRow({ name: '', price: 0, qty: 1 });
+        recalculate();
+      });
+
+      $('clearAllBtn').addEventListener('click', () => {
+        loadItems([{ name: '', price: 0, qty: 1 }]);
+        showToast('항목을 초기화했습니다.');
+      });
+
+      $('sampleBtn').addEventListener('click', () => {
+        loadItems(defaultItems);
+        showToast('예시 항목을 채웠습니다.');
+      });
+
+      $('eventTitle').addEventListener('input', recalculate);
+      $('peopleCount').addEventListener('input', recalculate);
+      $('roundMode').addEventListener('change', recalculate);
+      $('vatCheck').addEventListener('change', recalculate);
+
+      $('copyMsgBtn').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText($('shareText').value);
+          showToast('정산 안내 문구를 복사했습니다.');
+        } catch {
+          showToast('복사 권한을 확인해 주세요.');
+        }
+      });
+
+      loadItems(defaultItems);
+    })();
+  </script>
+</body>
+</html>
