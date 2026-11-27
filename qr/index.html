@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR 코드 생성기 & 리더기</title>
+  <!-- QR 생성 라이브러리 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- QR 해독 라이브러리 -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 24px 24px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    /* 탭 메뉴 */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: #f1f5f9;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      background: transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 24px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 입력 및 버튼 공통 */
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #f1f5f9;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* QR 출력 영역 */
+    .qr-result-box {
+      margin-top: 24px;
+      padding: 24px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 240px;
+      background-color: #fafafa;
+    }
+
+    #qrcode {
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    #qrcode img {
+      display: block;
+    }
+
+    .placeholder-text {
+      color: var(--muted);
+      font-size: 0.875rem;
+      text-align: center;
+    }
+
+    /* 이미지 업로드 영역 */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+      background-color: #fafafa;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--primary);
+      background-color: #eff6ff;
+    }
+
+    .upload-area p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    #preview-img {
+      max-width: 180px;
+      max-height: 180px;
+      margin-top: 16px;
+      border-radius: 8px;
+      display: none;
+      border: 1px solid var(--border);
+    }
+
+    /* 판독 결과 박스 */
+    .decode-result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background-color: #f1f5f9;
+      display: none;
+    }
+
+    .decode-result h3 {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .decoded-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      word-break: break-all;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-row .btn {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>QR 코드 생성기 & 리더기</h1>
+    <p>링크로 QR을 만들거나 이미지에서 링크를 추출하세요</p>
+  </header>
+
+  <!-- 탭 버튼 -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('generate')">QR 코드 만들기</button>
+    <button class="tab-btn" onclick="switchTab('read')">이미지로 QR 읽기</button>
+  </div>
+
+  <!-- 탭 1: QR 생성 -->
+  <div id="tab-generate" class="tab-content active">
+    <label for="url-input">링크(URL) 또는 텍스트 입력</label>
+    <input
+      type="text"
+      id="url-input"
+      placeholder="https://example.com"
+      oninput="generateQR()"
+    />
+
+    <div class="qr-result-box">
+      <div id="qrcode" style="display: none;"></div>
+      <p id="qr-placeholder" class="placeholder-text">위 입력창에 주소를 입력하면<br>QR 코드가 자동으로 생성됩니다.</p>
+    </div>
+
+    <button id="download-btn" class="btn" style="display: none;" onclick="downloadQR()">
+      QR 이미지 다운로드 (PNG)
+    </button>
+  </div>
+
+  <!-- 탭 2: QR 읽기 -->
+  <div id="tab-read" class="tab-content">
+    <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <strong>클릭하여 QR 이미지 선택</strong>
+      <p>또는 이미지를 이곳으로 드래그하세요</p>
+      <input type="file" id="file-input" accept="image/*" onchange="handleFile(this.files[0])" />
+      <img id="preview-img" alt="업로드된 QR 미리보기" />
+    </div>
+
+    <div id="decode-result" class="decode-result">
+      <h3>인식된 결과</h3>
+      <div id="decoded-text" class="decoded-text"></div>
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="copyDecodedText()">링크 복사</button>
+        <a id="open-link-btn" class="btn" href="#" target="_blank" style="text-align: center; text-decoration: none; display: none;">링크 열기</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 이미지 픽셀 분석용 숨김 캔버스 -->
+<canvas id="qr-canvas" style="display: none;"></canvas>
+
+<script>
+  // 1. 탭 전환 기능
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+    if (tabName === 'generate') {
+      document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      document.getElementById('tab-generate').classList.add('active');
+    } else {
+      document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      document.getElementById('tab-read').classList.add('active');
+    }
+  }
+
+  // 2. 실시간 QR 코드 자동 생성
+  let qrInstance = null;
+  function generateQR() {
+    const input = document.getElementById('url-input').value.trim();
+    const qrContainer = document.getElementById('qrcode');
+    const placeholder = document.getElementById('qr-placeholder');
+    const downloadBtn = document.getElementById('download-btn');
+
+    qrContainer.innerHTML = '';
+
+    if (!input) {
+      qrContainer.style.display = 'none';
+      placeholder.style.display = 'block';
+      downloadBtn.style.display = 'none';
+      return;
+    }
+
+    qrContainer.style.display = 'block';
+    placeholder.style.display = 'none';
+    downloadBtn.style.display = 'block';
+
+    qrInstance = new QRCode(qrContainer, {
+      text: input,
+      width: 200,
+      height: 200,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+
+  // 3. QR 이미지 다운로드
+  function downloadQR() {
+    const qrImg = document.querySelector('#qrcode img');
+    const qrCanvas = document.querySelector('#qrcode canvas');
+    const link = document.createElement('a');
+    link.download = 'qrcode.png';
+
+    if (qrImg && qrImg.src) {
+      link.href = qrImg.src;
+    } else if (qrCanvas) {
+      link.href = qrCanvas.toDataURL('image/png');
+    }
+    link.click();
+  }
+
+  // 4. 드래그 앤 드롭 이벤트 처리
+  const dropZone = document.getElementById('drop-zone');
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  // 5. 업로드된 이미지에서 QR 코드 해독
+  function handleFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드할 수 있습니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const img = new Image();
+      img.onload = function () {
+        // 미리보기 표시
+        const preview = document.getElementById('preview-img');
+        preview.src = event.target.result;
+        preview.style.display = 'inline-block';
+
+        // 캔버스에 이미지를 그려 픽셀 데이터 추출
+        const canvas = document.getElementById('qr-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: "dontInvert"
+        });
+
+        const resultBox = document.getElementById('decode-result');
+        const decodedTextEl = document.getElementById('decoded-text');
+        const openLinkBtn = document.getElementById('open-link-btn');
+
+        resultBox.style.display = 'block';
+
+        if (code) {
+          decodedTextEl.textContent = code.data;
+          // URL 형식인지 확인 후 '링크 열기' 버튼 활성화
+          if (/^https?:\/\//i.test(code.data)) {
+            openLinkBtn.href = code.data;
+            openLinkBtn.style.display = 'block';
+          } else {
+            openLinkBtn.style.display = 'none';
+          }
+        } else {
+          decodedTextEl.textContent = 'QR 코드를 인식하지 못했습니다. 선명한 QR 이미지를 올려주세요.';
+          openLinkBtn.style.display = 'none';
+        }
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // 6. 추출된 텍스트 복사
+  function copyDecodedText() {
+    const text = document.getElementById('decoded-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('클립보드에 복사되었습니다!');
+    });
+  }
+</script>
+
+</body>
+</html>
