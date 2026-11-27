@@ -284,7 +284,9 @@ function jump(){
   const p=S.p;if(p.jumps<2){p.vy=p.jumps===0?11.5:10.5;p.jumps++;p.ground=false;p.slideT=0}
 }
 function move(d){if(S.state==='ready')setState('run');if(S.state!=='run')return;S.p.lane=Math.max(0,Math.min(2,S.p.lane+d))}
-function slide(){if(S.state==='ready')setState('run');if(S.state!=='run')return;const p=S.p;p.slideT=.7;if(!p.ground)p.vy=Math.min(p.vy,-15)}
+// timed=true는 폰 스와이프용(잠깐 숙임), 키보드·버튼은 누르고 있는 동안만 숙임
+function slide(timed){if(S.state==='ready')setState('run');if(S.state!=='run')return;const p=S.p;p.slideT=timed?.6:0;if(!p.ground)p.vy=Math.min(p.vy,-15)}
+function unslide(){slideHeld=false;if(S.p)S.p.slideT=0}
 
 /* ---------- 생성 ---------- */
 function addObs(k,lane,z,shift){
@@ -434,7 +436,7 @@ window.addEventListener('keydown',e=>{
   else if(c==='KeyM'&&S.state!=='run')reset('ready');
   else if(c==='Enter'&&S.state==='over')reset('run');
 });
-window.addEventListener('keyup',e=>{if(e.code==='Space')e.preventDefault();if(e.code==='ArrowDown'||e.code==='KeyS')slideHeld=false});
+window.addEventListener('keyup',e=>{if(e.code==='Space')e.preventDefault();if(e.code==='ArrowDown'||e.code==='KeyS')unslide()});
 $('card').addEventListener('click',e=>{
   const b=e.target.closest('[data-i]');if(b){choose(+b.dataset.i,true);return}
   if(e.target.closest('[data-act=menu]'))reset('ready');
@@ -445,13 +447,13 @@ stage.addEventListener('pointerup',e=>{if(!sw)return;const dx=e.clientX-sw.x,dy=
   if(S.state==='ready')return;
   if(Math.max(Math.abs(dx),Math.abs(dy))<30)jump();
   else if(Math.abs(dx)>Math.abs(dy))move((dx>0?1:-1)*(Math.abs(dx)>stage.clientWidth*.35?2:1));
-  else if(dy<0)jump();else slide();});
+  else if(dy<0)jump();else slide(true);});
 const tap=(id,fn)=>$(id).addEventListener('pointerdown',e=>{e.preventDefault();fn()});
 tap('bj',jump);tap('bl',()=>move(-1));tap('br',()=>move(1));
 tap('bs',()=>{slideHeld=true;slide()});
-for(const ev of['pointerup','pointerleave','pointercancel'])$('bs').addEventListener(ev,()=>{slideHeld=false});
+for(const ev of['pointerup','pointerleave','pointercancel'])$('bs').addEventListener(ev,unslide);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.state==='run')setState('pause')});
-window.addEventListener('blur',()=>{slideHeld=false});
+window.addEventListener('blur',unslide);
 }
 </script>
 </body>
